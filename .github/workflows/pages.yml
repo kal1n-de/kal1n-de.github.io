@@ -1,0 +1,51 @@
+name: Publish uro-log
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout site release
+        uses: actions/checkout@v4
+
+      - name: Restore and verify release
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat uro-log-site.part-00 uro-log-site.part-01 uro-log-site.part-02 uro-log-site.part-03 > "$RUNNER_TEMP/uro-log.zip"
+          echo "09d6ff1b8c74d9cc3058cf415c8534834ea327794368e1d369e70bce8e4d8931  $RUNNER_TEMP/uro-log.zip" | sha256sum --check
+          mkdir -p _site
+          unzip -q "$RUNNER_TEMP/uro-log.zip" -d _site
+          test -s _site/index.html
+          test -s _site/de/index.html
+          test -s _site/ru/index.html
+          test -s _site/downloads/Urologie.zip
+          test -s _site/downloads/Урология.zip
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

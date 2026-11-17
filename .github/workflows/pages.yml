@@ -29,14 +29,14 @@ jobs:
         run: |
           set -euo pipefail
           cat uro-log-site.part-00 uro-log-site.part-01 uro-log-site.part-02 uro-log-site.part-03 > "$RUNNER_TEMP/uro-log.zip"
-          echo "09d6ff1b8c74d9cc3058cf415c8534834ea327794368e1d369e70bce8e4d8931  $RUNNER_TEMP/uro-log.zip" | sha256sum --check
+          echo "392639080c380cc899e477ca42d10bcdfcb36f74e79f8d4191ab221cea1ddbd1  $RUNNER_TEMP/uro-log.zip" | sha256sum --check
           mkdir -p _site
           unzip -q "$RUNNER_TEMP/uro-log.zip" -d _site
           test -s _site/index.html
           test -s _site/de/index.html
           test -s _site/ru/index.html
-          test -s _site/downloads/Urologie.zip
-          test -s _site/downloads/Урология.zip
+          test -s _site/downloads/uro-log_de.zip
+          test -s _site/downloads/uro-log_ru.zip
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

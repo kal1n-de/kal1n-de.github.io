@@ -29,7 +29,7 @@ jobs:
         run: |
           set -euo pipefail
           cat uro-log-site.part-00 uro-log-site.part-01 uro-log-site.part-02 uro-log-site.part-03 > "$RUNNER_TEMP/uro-log.zip"
-          echo "9b4f1170690e66af0eeb0dbefa29f337ec8feaa414ea03105f1c7473aaa9eaa3  $RUNNER_TEMP/uro-log.zip" | sha256sum --check
+          echo "d1022f6be0095f7c3999472d9f031fb1644bb7fbebfdff924d9dd5731b52ba2b  $RUNNER_TEMP/uro-log.zip" | sha256sum --check
           mkdir -p _site
           unzip -q "$RUNNER_TEMP/uro-log.zip" -d _site
           test -s _site/index.html

@@ -1,19 +1,15 @@
 name: Publish uro-log
-
 on:
   push:
     branches: [main]
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
   group: github-pages
   cancel-in-progress: false
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -23,31 +19,26 @@ jobs:
     steps:
       - name: Checkout site release
         uses: actions/checkout@v4
-
       - name: Restore and verify release
         shell: bash
         run: |
           set -euo pipefail
-          cat uro-log-site.part-00 uro-log-site.part-01 uro-log-site.part-02 uro-log-site.part-03 > "$RUNNER_TEMP/uro-log.zip"
-          echo "a6a55b4e95e55ab1ee04edc99a166d3ae47e6b38012462bc97303928ad2edb2d  $RUNNER_TEMP/uro-log.zip" | sha256sum --check
+          cat release-20261123.part-{00..08} > "$RUNNER_TEMP/uro-log.zip"
+          echo "4dc06bd210bc0bb09a0d5a6c9ee3cc80a648adcef85cb89bc052779901f8c5cb  $RUNNER_TEMP/uro-log.zip" | sha256sum --check
           mkdir -p _site
           unzip -q "$RUNNER_TEMP/uro-log.zip" -d _site
           test -s _site/index.html
-          test -s _site/favicon-uro.png
-          test ! -e _site/uro-log_hbs_20261118_0229.html
           test -s _site/de/index.html
           test -s _site/ru/index.html
-          test -s _site/downloads/uro-log_de.zip
-          test -s _site/downloads/uro-log_ru.zip
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
+          test -s _site/de/downloads/manifest.json
+          test -s _site/ru/downloads/manifest.json
+          test -s _site/release.json
+          test -s _site/robots.txt
+          test -s _site/sitemap.xml
+          test ! -e _site/uro-log_hbs_20261118_0229.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
-
-      - name: Deploy Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
